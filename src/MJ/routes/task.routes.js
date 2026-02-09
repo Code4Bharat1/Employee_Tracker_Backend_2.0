@@ -1,5 +1,6 @@
 import express from 'express';
 import { createTask, deleteTask, getTasks, updateTask } from '../controllers/task.controller.js';
+import { protect } from '../middleware/auth.middleware.js';
 
 const router = express.Router();
 router.post("/create-task", protect, createTask);

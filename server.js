@@ -11,6 +11,7 @@ import userRoutes from "./src/MJ/routes/user.routes.js";
 import projectRoutes from "./src/MJ/routes/project.routes.js";
 import moduleRoutes from "./src/MJ/routes/module.routes.js";
 import worklogRoutes from "./src/MJ/routes/worklog.routes.js";
+import taskRoutes from "./src/MJ/routes/task.routes.js"
 
 dotenv.config();
 
@@ -37,6 +38,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/projects", projectRoutes);
 app.use("/api/modules", moduleRoutes);
 app.use("/api/worklog", worklogRoutes);
+app.use("/api/tasks", taskRoutes);
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
