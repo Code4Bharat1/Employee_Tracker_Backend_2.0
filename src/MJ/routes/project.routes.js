@@ -6,8 +6,8 @@ import { allowRoles } from "../middleware/role.middleware.js";
 
 const router=express.Router();
 
-router.post("/create-project",allowRoles("MARKETING_ADMIN"),protect,createProject);
-router.get("/get-projects",allowRoles("MARKETING_ADMIN"),protect,getProjects);
+router.post("/create-project",protect,allowRoles("MARKETING_ADMIN"),createProject);
+router.get("/get-projects",protect,allowRoles("MARKETING_ADMIN"),getProjects);
 router.put("/update-project/:id",protect,allowRoles("MARKETING_ADMIN"),updateProject);
 router.delete("/delete-project/:id",protect,allowRoles("MARKETING_ADMIN"),deleteProject);
 
