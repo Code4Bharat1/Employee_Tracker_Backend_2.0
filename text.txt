@@ -1,0 +1,9 @@
+faizan2001
+mongodb+srv://faizangulab4276_db_user:<db_password>@cluster0.zzzm5fr.mongodb.net/?appName=Cluster0
+
+
+PORT=5000
+MONGO_URI=MONGODB_URI=mongodb+srv://faizangulab4276_db_user:faizan2001@cluster0.zzzm5fr.mongodb.net/myAppDB?retryWrites=true&w=majority&appName=Cluster0
+ACCESS_TOKEN=ACCESS_SECRET
+REFRESH_TOKEN=REFRESH_SECRET
+COOKIE_SECURE=false
