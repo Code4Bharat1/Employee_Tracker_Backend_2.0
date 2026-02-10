@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs";
-import User from "../models/user.model.js";
+import MJ_User from "../models/user.model.js";
 import {
   generateAccessToken,
   generateRefreshToken,
@@ -11,7 +11,7 @@ export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email, isActive: true });
+    const user = await MJ_User.findOne({ email, isActive: true });
     if (!user) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
