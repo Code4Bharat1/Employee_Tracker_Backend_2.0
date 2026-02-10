@@ -8,7 +8,16 @@ export const createModule = async (req, res)=>{
         res.status(500).json({message: "Module creations failed"});
     }
 };
-export const getModules = async (req,res)=>{
+// GET all modules
+export const getModules = async (req, res) => {
+    try {
+        const modules = await Module.find();
+        res.status(200).json(modules);
+    } catch (error) {
+        res.status(500).json({ message: "Fetching modules failed" });
+    }
+};
+export const updateModule = async (req,res)=>{
     try {
         const module = await Module.findByIdAndUpdate(
             req.params.id,
