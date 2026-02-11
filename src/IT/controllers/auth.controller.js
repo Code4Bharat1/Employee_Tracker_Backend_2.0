@@ -28,7 +28,13 @@ export const login = async (req, res) => {
       secure: false,
     });
 
-    res.status(200).json({ accessToken, user });
+    res.status(200).json({ accessToken, 
+        user : {
+        id : user._id,
+        name : user.name,
+        email : user.email,
+        role : user.role
+    } });
   } catch {
     res.status(500).json({ message: "Login failed" });
   }
