@@ -12,7 +12,7 @@ import {allowRoles} from "../middleware/role.middleware.js";
 const router = express.Router();
 
 router.post (
-    "/create",
+    "/create-module",
     protect,
     allowRoles("MARKETING_ADMIN", "PROJECT_MANAGER"),
     createModule
