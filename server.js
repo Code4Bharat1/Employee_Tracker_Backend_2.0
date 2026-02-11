@@ -53,7 +53,7 @@ app.use("/api/it/users", ituserRoutes);
 app.use("/api/it/task", ittaskRoutes);
 app.use("/api/it/module", itmoduleRoutes);
 app.use("/api/it/worklog", itworkLogRoutes);
-app.use("/api/it/project/", itprojectRoutes);
+app.use("/api/it/project", itprojectRoutes);
 app.use("/api/it/auth", itAuthRoutes);
 
 const PORT = process.env.PORT;
