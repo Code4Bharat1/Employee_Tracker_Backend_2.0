@@ -27,6 +27,7 @@ export const updateWorklogStatus = async (req, res) => {
   try {
     const log = await Worklog.findByIdAndUpdate(
       req.params.id,
+      req.body,
       { status: req.body.status },
       { new: true }
     );
