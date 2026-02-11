@@ -1,4 +1,4 @@
-import  Model  from "../models/module.model";
+import  Model  from "../models/module.model.js";
 export const createModule = async (req, res) =>{
 try {
     const module = await Module.create(req.body);

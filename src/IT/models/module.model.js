@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { MODULE_STATUS } from "../utils/constants";
+import { MODULE_STATUS } from "../utils/constants.js";
 
 const moduleSchema = new mongoose.Schema(
     {
@@ -21,7 +21,7 @@ const moduleSchema = new mongoose.Schema(
         },
 
         deadline: {
-            type: Data
+            type: Date
         },
 
         progress: {
@@ -45,4 +45,4 @@ const moduleSchema = new mongoose.Schema(
     { timestamps: true }
 );
 
-export default mongoos.model("IT_Module", moduleSchema);
+export default mongoose.model("IT_Module", moduleSchema);

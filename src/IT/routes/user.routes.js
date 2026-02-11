@@ -1,7 +1,7 @@
-import expree from "express";
-import { protect } from "../middlewares/auth.middleware";
-import { allowRoles } from "../middlewares/role.middlewares";
-import { createUser, deleteUser, getUsers, updateUser } from "../controllers/user.controller";
+import express from "express";
+import { protect } from "../middlewares/auth.middleware.js";
+import { allowRoles } from "../middlewares/role.middlewares.js";
+import { createUser, deleteUser, getUsers, updateUser } from "../controllers/user.controller.js";
 
 const router = express.Router();
 

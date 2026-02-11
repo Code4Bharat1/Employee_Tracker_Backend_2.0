@@ -4,8 +4,8 @@ import {
     getModules,
     updateModule,
     deleteModule,
-} from "../controllers/auth.controller";
-import  { protect }from "../middlewares/auth.middleware";
+} from "../controllers/module.controller.js";
+import  { protect }from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
