@@ -1,8 +1,9 @@
 import express from "express";
 import {
     createModule,
-    getModules,
     deleteModule,
+    getModules,
+    updateModule,
 }from "../controllers/module.controller.js";
 
 import {protect} from "../middleware/auth.middleware.js";
@@ -16,12 +17,18 @@ router.post (
     allowRoles("MARKETING_ADMIN", "PROJECT_MANAGER"),
     createModule
 );
+router.get(
+    "/get-modules",
+    protect,
+    allowRoles("MARKETING_ADMIN", "PROJECT_MANAGER"),
+    getModules
+);
 
 router.put(
    "/update/:id",
     protect,
     allowRoles("MARKETING_ADMIN", "PROJECT_MANAGER"),
-    getModules
+    updateModule
 );
 
 router.delete(

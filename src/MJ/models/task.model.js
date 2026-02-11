@@ -35,7 +35,10 @@ const taskSchema = new mongoose.Schema(
       type: Date,
     },
 
-    // task progress
+    // task progress stage 
+    // head/admin--> pending/approved/rejected
+    // emp-->submitted
+    // Note--> emp --> when task assign to emp by head/admin by defauls it shows pennding status
     status: {
       type: String,
       enum: ["PENDING", "SUBMITTED", "APPROVED", "REJECTED"],

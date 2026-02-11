@@ -27,7 +27,7 @@ export const updateTask = async (req, res) => {
     const task = await Task.findByIdAndUpdate(
       req.params.id,
       req.body,
-      { new: true }
+      { new: true, runValidators: true } //Return updated document.
     );
     res.status(200).json(task);
   } catch (error) {
