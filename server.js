@@ -5,18 +5,20 @@ import cookieParser from "cookie-parser";
 import connectDB from "./src/config/db.js";
 
 //Routes Import  MJ
-import authRoutes from "./src/MJ/routes/auth.routes.js";
-import userRoutes from "./src/MJ/routes/user.routes.js";
-import projectRoutes from "./src/MJ/routes/project.routes.js";
-import moduleRoutes from "./src/MJ/routes/module.routes.js";
-import worklogRoutes from "./src/MJ/routes/worklog.routes.js";
-import taskRoutes from "./src/MJ/routes/task.routes.js";
+import mjauthRoutes from "./src/MJ/routes/auth.routes.js";
+import mjuserRoutes from "./src/MJ/routes/user.routes.js";
+import mjprojectRoutes from "./src/MJ/routes/project.routes.js";
+import mjmoduleRoutes from "./src/MJ/routes/module.routes.js";
+import mjworklogRoutes from "./src/MJ/routes/worklog.routes.js";
+import mjtaskRoutes from "./src/MJ/routes/task.routes.js";
 
 //Routes Import IT
-import usersRoutes from "./src/IT/routes/user.routes.js";
-import tasksRoutes from "./src/IT/routes/task.route.js";
-import modulesRoutes from "./src/IT/routes/module.routes.js";
-import workLogsRoutes from "./src/IT/routes/worklog.routes.js";
+import ituserRoutes from "./src/IT/routes/user.routes.js";
+import ittaskRoutes from "./src/IT/routes/task.route.js";
+import itmoduleRoutes from "./src/IT/routes/module.routes.js";
+import itworkLogRoutes from "./src/IT/routes/worklog.routes.js";
+import itprojectRoutes from "./src/IT/routes/project.routes.js";
+import itAuthRoutes from "./src/IT/routes/auth.routes.js"
 
 dotenv.config();
 
@@ -39,20 +41,22 @@ app.get("/", (req, res) => {
 });
 
 //Base Routes MJ
-app.use("/api/auth", authRoutes);
-app.use("/api/users", userRoutes);
-app.use("/api/projects", projectRoutes);
-app.use("/api/modules", moduleRoutes);
-app.use("/api/worklog", worklogRoutes);
-app.use("/api/tasks", taskRoutes);
+app.use("/api/mj/auth", mjauthRoutes);
+app.use("/api/mj/users", mjuserRoutes);
+app.use("/api/mj/projects", mjprojectRoutes);
+app.use("/api/mj/modules", mjmoduleRoutes);
+app.use("/api/mj/worklog", mjworklogRoutes);
+app.use("/api/mj/tasks", mjtaskRoutes);
 
 //Base Routs IT
-app.use("/api/it/users", usersRoutes);
-app.use("/api/it/task", tasksRoutes);
-app.use("/api/it/module", modulesRoutes);
-app.use("/api/it/worklog", workLogsRoutes);
+app.use("/api/it/users", ituserRoutes);
+app.use("/api/it/task", ittaskRoutes);
+app.use("/api/it/module", itmoduleRoutes);
+app.use("/api/it/worklog", itworkLogRoutes);
+app.use("/api/it/project/", itprojectRoutes);
+app.use("/api/it/auth", itAuthRoutes);
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
-  console.log(`🚀 MJ server running on port ${PORT}`);
+  console.log(`🚀server running on port ${PORT}`);
 });
