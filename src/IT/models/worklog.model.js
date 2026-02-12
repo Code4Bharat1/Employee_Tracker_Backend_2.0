@@ -5,13 +5,13 @@ const worklogSchema = new mongoose.Schema(
   {
     employee: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "IT_User",
+      ref: "IT_USER",
       required: true,
     },
 
     task: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "IT_Task",
+      ref: "IT_TASK",
       required: true,
     },
 
