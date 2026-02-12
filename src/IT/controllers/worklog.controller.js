@@ -29,20 +29,35 @@ export const getWorkLogs = async (req, res) => {
 };
 
 //Update WorkLogs Status
-export const updateWorkLogsStatus = async (req, res) => {
+export const updateMyWorklog = async (req, res) => {
   try {
-    const log = await Worklog.findByIdAndUpdate(
-      req.params.id,
-      { status: req.body.status },
-      { new: true },
-    );
+    const log = await Worklog.findById(req.params.id);
 
-    return res.status(200).json({ message: "log Updated", log });
+    if (!log) {
+      return res.status(404).json({ message: "Worklog not found" });
+    }
+
+    if (log.employee.toString() !== req.user.id) {
+      return res.status(403).json({ message: "Not authorized" });
+    }
+
+    log.description = req.body.description || log.description;
+    log.task = req.body.task || log.task;
+
+    if (req.file) {
+      log.screenShot = req.file.path;
+    }
+
+    await log.save();
+
+    return res.status(200).json({ message: "Updated successfully", log });
+
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
 
 //Delete WorkLogs
 export const deleteWorkLog = async (req, res) => {
