@@ -20,14 +20,15 @@ export  const getModules = async (req,res) => {
 
 export const updateModule = async (req,res)=>{
     try {
-        const module = await Module.findByIdAndUpadte(
+        const module = await Module.findByIdAndUpdate(
             req.params.id,
             req.body,
             { new: true }
         );
         res.status(200).json(module);
-    } catch {
-        res.status(500).json({ message: "Upadte failed" });
+    } catch(error) {
+        console.log(error);
+        res.status(500).json({ message: "Upadate failed" });
         
     }
 };
