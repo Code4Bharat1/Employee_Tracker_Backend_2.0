@@ -11,7 +11,7 @@ const taskSchema= new mongoose.Schema({
     description:String,
     assignedTo:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:"IT_USER"
+        ref:"IT_User"
     },
     deadline:Date,
     status:{
@@ -23,4 +23,4 @@ const taskSchema= new mongoose.Schema({
 {timestamps:true}
 );
 
-export default mongoose.model("IT_TASK",taskSchema);
+export default mongoose.model("IT_Task",taskSchema);
