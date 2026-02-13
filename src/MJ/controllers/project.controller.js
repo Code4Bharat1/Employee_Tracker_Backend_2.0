@@ -34,3 +34,31 @@ export const deleteProject = async (req, res) => {
     res.status(200).json({ message: "Project deleted successfully" });
   } catch (error) {}
 };
+
+export const approveProject = async (req, res) => {
+  try {
+    const project = await Project.findByIdAndUpdate(
+      req.params.id,
+      { status: "Approved" },
+      { new: true }
+    );
+
+    res.status(200).json(project);
+  } catch (error) {
+    res.status(500).json({ message: "Project approval failed" });
+  }
+};
+
+export const rejectProject = async (req, res) => {
+  try {
+    const project = await Project.findByIdAndUpdate(
+      req.params.id,
+      { status: "Rejected" },
+      { new: true }
+    );
+
+    res.status(200).json(project);
+  } catch (error) {
+    res.status(500).json({ message: "Project rejection failed" });
+  }
+};

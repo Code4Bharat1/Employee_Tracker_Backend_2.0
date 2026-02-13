@@ -37,7 +37,7 @@ export const getProjectSummary = async (req, res, next) => {
 //User Summary:
 export const getUsersSummary = async (req, res, next) => {
   try {
-    const { userId } = req.params.id;
+    const { userId } = req.params;
     const summary = await Worklog.aggregate([
       { $match: { user: userId } },
       {
@@ -71,7 +71,7 @@ export const getWorklogReport = async (req, res, next) => {
       };
     }
 
-    const logs = await WorkLog.find(filter)
+    const logs = await Worklog.find(filter)
       .populate("user", "name email")
       .populate("project", "name")
       .populate("task", "title");
@@ -94,7 +94,7 @@ export const getMonthlyReport = async (req, res, next) => {
     const start = new Date(year, month - 1, 1);
     const end = new Date(year, month, 0);
 
-    const report = await WorkLog.aggregate([
+    const report = await Worklog.aggregate([
       {
         $match: {
           date: { $gte: start, $lte: end },

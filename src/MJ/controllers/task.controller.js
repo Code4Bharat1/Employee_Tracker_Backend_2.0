@@ -44,3 +44,31 @@ export const deleteTask = async (req, res) => {
   }
 };
 
+export const approveTask = async (req, res) => {
+  try {
+    const task = await Task.findByIdAndUpdate(
+      req.params.id,
+      { status: "Approved" },
+      { new: true }
+    );
+
+    res.status(200).json(task);
+  } catch (error) {
+    res.status(500).json({ message: "Task approval failed" });
+  }
+};
+
+
+export const rejectTask = async (req, res) => {
+  try {
+    const task = await Task.findByIdAndUpdate(
+      req.params.id,
+      { status: "Rejected" },
+      { new: true }
+    );
+
+    res.status(200).json(task);
+  } catch (error) {
+    res.status(500).json({ message: "Task rejection failed" });
+  }
+};

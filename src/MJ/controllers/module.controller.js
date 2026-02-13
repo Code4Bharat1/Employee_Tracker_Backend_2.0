@@ -40,3 +40,31 @@ export const deleteModule = async (req, res) => {
     res.status(500).json({ message: "Module deletion failed" });
   }
 };
+
+export const approveModule = async (req, res) => {
+  try {
+    const module = await Module.findByIdAndUpdate(
+      req.params.id,
+      { status: "Approved" },
+      { new: true }
+    );
+
+    res.status(200).json(module);
+  } catch (error) {
+    res.status(500).json({ message: "Module approval failed" });
+  }
+};
+
+export const rejectModule = async (req, res) => {
+  try {
+    const module = await Module.findByIdAndUpdate(
+      req.params.id,
+      { status: "Rejected" },
+      { new: true }
+    );
+
+    res.status(200).json(module);
+  } catch (error) {
+    res.status(500).json({ message: "Module rejection failed" });
+  }
+};

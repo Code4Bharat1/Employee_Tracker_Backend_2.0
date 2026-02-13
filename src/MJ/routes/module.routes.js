@@ -4,6 +4,8 @@ import {
     deleteModule,
     getModules,
     updateModule,
+    approveModule,
+    rejectModule
 }from "../controllers/module.controller.js";
 
 import {protect} from "../middleware/auth.middleware.js";
@@ -37,5 +39,8 @@ router.delete(
     allowRoles("MARKETING_ADMIN"),
     deleteModule
 );
+
+router.patch("/:id/approve", approveModule);
+router.patch("/:id/reject", rejectModule);
 
 export default router;
