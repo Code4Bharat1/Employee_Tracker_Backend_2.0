@@ -11,6 +11,7 @@ import mjprojectRoutes from "./src/MJ/routes/project.routes.js";
 import mjmoduleRoutes from "./src/MJ/routes/module.routes.js";
 import mjworklogRoutes from "./src/MJ/routes/worklog.routes.js";
 import mjtaskRoutes from "./src/MJ/routes/task.routes.js";
+import mjreportRoutes from "./src/MJ/routes/report.routes.js"
 
 //Routes Import IT
 import ituserRoutes from "./src/IT/routes/user.routes.js";
@@ -47,6 +48,7 @@ app.use("/api/mj/projects", mjprojectRoutes);
 app.use("/api/mj/modules", mjmoduleRoutes);
 app.use("/api/mj/worklog", mjworklogRoutes);
 app.use("/api/mj/tasks", mjtaskRoutes);
+app.use("/api/mj/report",mjreportRoutes);
 
 //Base Routs IT
 app.use("/api/it/users", ituserRoutes);
