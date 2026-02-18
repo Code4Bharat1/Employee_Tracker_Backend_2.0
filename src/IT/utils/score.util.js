@@ -1,4 +1,3 @@
-// src/utils/score.util.js
 export const clamp10 = (n) => Math.max(0, Math.min(10, n));
 
 export const calculateScore10 = ({
@@ -11,7 +10,7 @@ export const calculateScore10 = ({
 }) => {
   let score = base;
 
-  // ✅ deadline logic
+  // deadline logic
   if (deadline) {
     const d = new Date(deadline);
     const c = completedAt ? new Date(completedAt) : new Date();
@@ -20,13 +19,13 @@ export const calculateScore10 = ({
     else score -= 2;            // late
   }
 
-  // 🔁 rework penalty
+  //  rework penalty
   score -= Number(reworkCount || 0);
 
-  // 🐞 bug penalty (every 2 bugs => -1)
+  //  bug penalty (every 2 bugs => -1)
   score -= Math.ceil(Number(bugCount || 0) / 2);
 
-  // ⭐ bonus if approved in first review
+  //  bonus if approved in first review
   if (firstTimeApproval) score += 1;
 
   return clamp10(score);
