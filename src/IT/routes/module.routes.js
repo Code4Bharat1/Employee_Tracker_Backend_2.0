@@ -12,7 +12,7 @@ import { allowRoles } from "../middlewares/role.middlewares.js";
 const router = express.Router();
 
 router.post("/create", protect, createModule);
-router.get("/list", protect, getModules);
+router.get("/get-modules", protect, getModules);
 router.put("/update/:id", protect, updateModule);
 router.delete("/delete/:id", protect, deleteModule);
 

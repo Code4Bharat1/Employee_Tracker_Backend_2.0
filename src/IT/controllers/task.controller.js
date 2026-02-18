@@ -1,5 +1,10 @@
+// =======================
+// controllers/task.controller.js
+// =======================
 import Task from "../models/task.model.js";
 import Rating from "../models/rating.model.js";
+import { calculateScore10 } from "../utils/score.util.js";
+import { TASK_STATUS, REVIEW_STATUS } from "../utils/constants.js";
 
 export const createTask = async (req, res) => {
   try {
@@ -13,8 +18,7 @@ export const createTask = async (req, res) => {
 
 export const getTasks = async (req, res) => {
   try {
-    const tasks = await Task.find().populate("assignedTo");
-    console.log(tasks);
+    const tasks = await Task.find().populate("assignedTo module");
     return res.status(200).json(tasks);
   } catch (error) {
     console.log(error);
@@ -44,62 +48,71 @@ export const deleteTask = async (req, res) => {
   }
 };
 
-// export const updateTaskStatus = async (req, res) => {
-//   try {
-//     const task = await Task.findByidAndUpdate(
-//       req.params.id,
-//       { status: req.body.status },
-//       { new: true },
-//     );
-//     return res.status(200).json(task);
-//   } catch (error) {
-//     console.log(error);
-//     return res.status(500).json({ message: "Status Update Failed " });
-//   }
-// }; 
-
+//  UPDATED: reviewTask 
 export const reviewTask = async (req, res) => {
   try {
-    const { decision, score10, deduction10, reason } = req.body;
-    // decision = APPROVED | REJECTED
+    const { decision, deduction10, reason } = req.body;
 
-    const task = await Task.findById(req.params.id)
-      .populate("assignedTo module project");
-
-    if (!task) return res.status(404).json({ message: "Task not found" });
-
-    if (task.status !== "COMPLETED") {
-      return res.status(400).json({ message: "Task must be completed first" });
+    //  VALIDATION (fixes decision undefined)
+    if (!decision || !["APPROVED", "REJECTED"].includes(decision)) {
+      return res.status(400).json({
+        message: "decision must be APPROVED or REJECTED",
+      });
     }
 
-    task.reviewStatus = decision;
+    const task = await Task.findById(req.params.id).populate("assignedTo module");
+    if (!task) return res.status(404).json({ message: "Task not found" });
+
+    //  only review if COMPLETED
+    if (task.status !== TASK_STATUS.COMPLETED) {
+      return res
+        .status(400)
+        .json({ message: "Task must be COMPLETED before review" });
+    }
+
+    //  first-time approval flag
+    const firstTimeApproval = task.reviewStatus === REVIEW_STATUS.PENDING;
+
+    //  save review info
+    task.reviewStatus = decision; // must match your REVIEW_STATUS values
     task.reviewedBy = req.user?.id;
     task.reviewedAt = new Date();
 
+    //  status update based on decision
     if (decision === "APPROVED") {
-      task.status = "APPROVED";
+      task.status = TASK_STATUS.APPROVED;
     } else {
-      task.status = "IN_PROGRESS"; // rework
+      task.status = TASK_STATUS.IN_PROGRESS; // send back for rework
+      task.reworkCount = (task.reworkCount || 0) + 1; // optional
     }
 
     await task.save();
 
-    // points logic
-    const points =
-      decision === "APPROVED"
-        ? (typeof score10 === "number" ? score10 : 8)
-        : -1 * (typeof deduction10 === "number" ? deduction10 : 2);
+    //  points calculation
+    let points10;
 
+    if (decision === "APPROVED") {
+      points10 = calculateScore10({
+        deadline: task.deadline,
+        reworkCount: task.reworkCount || 0,
+        bugCount: task.bugCount || 0,
+        firstTimeApproval,
+        base: 8, // task base
+      });
+    } else {
+      points10 = -1 * (typeof deduction10 === "number" ? deduction10 : 2);
+    }
+
+    //  store rating 
     const rating = await Rating.findOneAndUpdate(
       { task: task._id, type: "TASK" },
       {
         employee: task.assignedTo?._id,
         task: task._id,
-        module: task.module,
-        project: task.project,
+        module: task.module?._id || task.module,
         type: "TASK",
         decision,
-        points10: points,
+        points10,
         reason,
         createdBy: req.user?.id,
         reviewedAt: new Date(),
@@ -107,9 +120,13 @@ export const reviewTask = async (req, res) => {
       { new: true, upsert: true }
     );
 
-    res.json({ message: `Task ${decision}`, task, rating });
+    return res.status(200).json({
+      message: decision === "APPROVED" ? "Task approved" : "Task rejected",
+      task,
+      rating,
+    });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Task review failed" });
+    return res.status(500).json({ message: "Task review failed" });
   }
 };
