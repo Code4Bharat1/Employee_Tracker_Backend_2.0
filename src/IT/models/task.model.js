@@ -1,8 +1,3 @@
-// ✅ UPDATED Task Model + reviewTask Controller (fixed issues)
-
-// =======================
-// models/task.model.js
-// =======================
 import mongoose from "mongoose";
 import { TASK_STATUS, REVIEW_STATUS } from "../utils/constants.js";
 
@@ -31,11 +26,11 @@ const taskSchema = new mongoose.Schema(
       default: REVIEW_STATUS.PENDING,
     },
 
-    // ✅ FIX: correct ref (your user model is IT_User)
+    //  FIX: correct ref (your user model is IT_User)
     reviewedBy: { type: mongoose.Schema.Types.ObjectId, ref: "IT_User" },
     reviewedAt: Date,
 
-    // ✅ OPTIONAL (needed if you want scoring based on rework/bugs)
+    //  OPTIONAL (needed if you want scoring based on rework/bugs)
     reworkCount: { type: Number, default: 0 },
     bugCount: { type: Number, default: 0 },
   },
