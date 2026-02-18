@@ -20,7 +20,9 @@ import ittaskRoutes from "./src/IT/routes/task.route.js";
 import itmoduleRoutes from "./src/IT/routes/module.routes.js";
 import itworkLogRoutes from "./src/IT/routes/worklog.routes.js";
 import itprojectRoutes from "./src/IT/routes/project.routes.js";
-import itAuthRoutes from "./src/IT/routes/auth.routes.js"
+import itAuthRoutes from "./src/IT/routes/auth.routes.js";
+import itRatingRoutes from "./src/IT/routes/rating.routes.js";
+import itReportRoutes from "./src/IT/routes/report.routes.js";
 
 dotenv.config();
 
@@ -59,6 +61,8 @@ app.use("/api/it/module", itmoduleRoutes);
 app.use("/api/it/worklog", itworkLogRoutes);
 app.use("/api/it/project", itprojectRoutes);
 app.use("/api/it/auth", itAuthRoutes);
+app.use("/api/it/rating", itRatingRoutes);
+app.use("/api/it/report", itReportRoutes);
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
