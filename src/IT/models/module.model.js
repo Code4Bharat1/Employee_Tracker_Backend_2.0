@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { MODULE_STATUS } from "../utils/constants.js";
+import { MODULE_STATUS, REVIEW_STATUS } from "../utils/constants.js";
 
 const moduleSchema = new mongoose.Schema(
     {
@@ -31,11 +31,18 @@ const moduleSchema = new mongoose.Schema(
             max: 100,
         },
 
-        status:{
+        status: {
             type: String,
             enum: Object.values(MODULE_STATUS),
             default: MODULE_STATUS.PENDING,
         },
+        reviewStatus: {
+            type: String,
+            enum: Object.values(REVIEW_STATUS),
+            default: REVIEW_STATUS.PENDING,
+        },
+        reviewedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+        reviewedAt: Date,
 
         isActive: {
             type: Boolean,

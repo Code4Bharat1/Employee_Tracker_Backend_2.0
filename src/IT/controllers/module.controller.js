@@ -41,3 +41,56 @@ export const deleteModule = async (req,res) =>{
         res.status(500).json({message: "Delete failed" });
     }
 };
+
+export const reviewModule = async (req, res) => {
+  try {
+    const { decision, score10, deduction10, reason } = req.body;
+
+    const module = await Module.findById(req.params.id)
+      .populate("assignedTo project");
+
+    if (!module) return res.status(404).json({ message: "Module not found" });
+
+    if (module.status !== "COMPLETED") {
+      return res.status(400).json({ message: "Module must be completed first" });
+    }
+
+    module.reviewStatus = decision;
+    module.reviewedBy = req.user?.id;
+    module.reviewedAt = new Date();
+
+    if (decision === "APPROVED") {
+      module.status = "APPROVED";
+    } else {
+      module.status = "IN_PROGRESS";
+    }
+
+    await module.save();
+
+    const points =
+      decision === "APPROVED"
+        ? (typeof score10 === "number" ? score10 : 9)
+        : -1 * (typeof deduction10 === "number" ? deduction10 : 3);
+
+    const rating = await Rating.findOneAndUpdate(
+      { module: module._id, type: "MODULE" },
+      {
+        employee: module.assignedTo?._id,
+        module: module._id,
+        project: module.project,
+        type: "MODULE",
+        decision,
+        points10: points,
+        reason,
+        createdBy: req.user?.id,
+        reviewedAt: new Date(),
+      },
+      { new: true, upsert: true }
+    );
+
+    res.json({ message: `Module ${decision}`, module, rating });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Module review failed" });
+  }
+};

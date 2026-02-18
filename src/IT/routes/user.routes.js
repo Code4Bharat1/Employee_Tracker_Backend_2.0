@@ -5,7 +5,7 @@ import { createUser, deleteUser, getUsers, updateUser } from "../controllers/use
 
 const router = express.Router();
 
-router.post("/create-user", createUser);
+router.post("/create-user",protect, createUser);
 router.get("/get-users", protect, getUsers);
 router.put("/update-user/:id", protect, allowRoles("IT_ADMIN"), updateUser);
 router.delete("/delete-user/:id", protect, allowRoles("IT_ADMIN"), deleteUser);
