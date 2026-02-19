@@ -6,9 +6,10 @@ export const ROLES = {
 };
 
 export const PROJECT_STATUS = {
-  ACTIVE: "ACTIVE",
+ PENDING: "PENDING",
   COMPLETED: "COMPLETED",
-  ON_HOLD: "ON_HOLD",
+  APPROVED: "APPROVED",
+  IN_PROGRESS: "IN_PROGRESS"
 };
 
 export const MODULE_STATUS = {

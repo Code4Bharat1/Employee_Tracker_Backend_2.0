@@ -11,6 +11,11 @@ const projectSchema = new mongoose.Schema(
       enum: Object.values(PROJECT_STATUS),
       default: PROJECT_STATUS.ACTIVE,
     },
+    assignedTo: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "IT_User",
+      required: true
+    }
   },
   { timestamps: true }
 );

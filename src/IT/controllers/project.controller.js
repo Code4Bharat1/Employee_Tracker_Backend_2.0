@@ -11,7 +11,8 @@ export const createProject = async (req, res)=>{
 
 export const getProjects = async(req, res)=>{
     try {
-        const projects = await Project.find();
+        const projects = await Project.find().populate("assignedTo", "name email");
+        console.log(projects);
         res.status(200).json(projects);
     } catch {
         res.status(500).json({message:"Fetch failed"});
@@ -52,7 +53,7 @@ export const updateProjectStatus = async (req, res)=>{
             {status:req.body.status},
             {new: true}
         );
-        res.status(200),json(project);
+        res.status(200).json(project);
     } catch {
         res.status(500).json({message:"status  update failed"});
     }
