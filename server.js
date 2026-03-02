@@ -4,6 +4,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import connectDB from "./src/config/db.js";
 
+
 //Routes Import  MJ
 import mjauthRoutes from "./src/MJ/routes/auth.routes.js";
 import mjuserRoutes from "./src/MJ/routes/user.routes.js";
@@ -24,7 +25,11 @@ import itAuthRoutes from "./src/IT/routes/auth.routes.js";
 import itRatingRoutes from "./src/IT/routes/rating.routes.js";
 import itReportRoutes from "./src/IT/routes/report.routes.js";
 
-dotenv.config();
+
+// import testingRoutes from "./src/IT/routes/testing.routes.js";
+
+
+dotenv.config(); 
 
 connectDB();
 
@@ -63,7 +68,7 @@ app.use("/api/it/project", itprojectRoutes);
 app.use("/api/it/auth", itAuthRoutes);
 app.use("/api/it/rating", itRatingRoutes);
 app.use("/api/it/report", itReportRoutes);
-
+// 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`🚀server running on port ${PORT}`);
