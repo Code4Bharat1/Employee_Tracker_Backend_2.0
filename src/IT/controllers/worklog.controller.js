@@ -5,9 +5,11 @@ export const createWorklog = async (req, res) => {
   try {
     const log = await Worklog.create({
       employee: req.user.id,
+      project: req.body.project,
+      module: req.body.module,
       description: req.body.description,
-      task: req.body.task,
-      screenShot: req.file?.path,
+      // task: req.body.task,
+      // screenShot: req.file?.path,
     });
 
     return res.status(201).json({ message: "Worklog Done", log });
@@ -20,7 +22,7 @@ export const createWorklog = async (req, res) => {
 //Get All WorkLog
 export const getWorkLogs = async (req, res) => {
   try {
-    const logs = await Worklog.find().populate("employee task");
+    const logs = await Worklog.find().populate("employee project module");
     return res.status(200).json({ message: "Data Fetch", logs });
   } catch (error) {
     console.error(error);

@@ -8,11 +8,23 @@ const worklogSchema = new mongoose.Schema(
       required: true,
     },
 
-    task: {
+    project: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "IT_Task",
-      required: true,
+      ref: "IT_Project",
+      required: true
     },
+
+    module: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "IT_Module",
+      required: true
+    },
+
+    // task: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: "IT_Task",
+    //   required: true,
+    // },
 
     description: {
       type: String,
@@ -22,6 +34,7 @@ const worklogSchema = new mongoose.Schema(
 
     screenShot: {
       type: String,
+      default: null
     },
   },
   { timestamps: true }
