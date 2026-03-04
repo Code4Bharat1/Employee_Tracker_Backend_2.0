@@ -16,6 +16,7 @@ import mjreportRoutes from "./src/MJ/routes/report.routes.js";
 import mjratingRoutes from "./src/MJ/routes/rating.routes.js"
 
 //Routes Import IT
+import ittestingRoutes from "./src/IT/routes/testing.routes.js";
 import ituserRoutes from "./src/IT/routes/user.routes.js";
 //import ittaskRoutes from "./src/IT/routes/task.route.js";
 import itmoduleRoutes from "./src/IT/routes/module.routes.js";
@@ -62,6 +63,7 @@ app.use("/api/mj/rating", mjratingRoutes);
 //Base Routs IT
 app.use("/api/it/users", ituserRoutes);
 //app.use("/api/it/task", ittaskRoutes);
+app.use("/api/it/testing", ittestingRoutes);
 app.use("/api/it/module", itmoduleRoutes);
 app.use("/api/it/worklog", itworkLogRoutes);
 app.use("/api/it/project", itprojectRoutes);
