@@ -2,7 +2,7 @@ import TestingProject from "../models/testingProject.model.js";
 import Bug from "../models/bug.model.js";
 import TesterScore from "../models/testerScore.model.js";
 
-// ✅ DASHBOARD
+//  DASHBOARD
 export const getTestingDashboard = async (req, res) => {
   const projects = await TestingProject.find();
 
@@ -31,13 +31,13 @@ export const getTestingDashboard = async (req, res) => {
   });
 };
 
-// ✅ PROJECTS LIST
+//  PROJECTS LIST
 export const getTestingProjects = async (req, res) => {
   const projects = await TestingProject.find().sort({ updatedAt: -1 });
   res.json(projects);
 };
 
-// ✅ MARK PHASE COMPLETE (Testing Manager only)
+//  MARK PHASE COMPLETE (Testing Manager only)
 export const markPhaseCompleted = async (req, res) => {
   const { id } = req.params; // testingProject id
   const { phase } = req.body; // frontend/backend/cyber/seo
@@ -74,7 +74,7 @@ export const markPhaseCompleted = async (req, res) => {
   res.json(project);
 };
 
-// ✅ VALIDATE PHASE (Testing Manager only)
+//  VALIDATE PHASE (Testing Manager only)
 export const validatePhase = async (req, res) => {
   const { id } = req.params;
   const { phase, validated } = req.body;
@@ -92,7 +92,7 @@ export const validatePhase = async (req, res) => {
   res.json(project);
 };
 
-// ✅ CREATE BUG (Testing Manager)
+//  CREATE BUG (Testing Manager)
 export const createBug = async (req, res) => {
   const { testingProjectId, phase, title, description } = req.body;
 
@@ -130,7 +130,7 @@ export const createBug = async (req, res) => {
   res.json({ bug, project });
 };
 
-// ✅ UPDATE BUG STATUS (Testing Manager)
+//  UPDATE BUG STATUS (Testing Manager)
 export const updateBugStatus = async (req, res) => {
   const { bugId } = req.params;
   const { status } = req.body;
@@ -144,13 +144,13 @@ export const updateBugStatus = async (req, res) => {
   res.json(bug);
 };
 
-// ✅ BUG LIST
+//  BUG LIST
 export const getBugs = async (req, res) => {
   const bugs = await Bug.find().sort({ createdAt: -1 });
   res.json(bugs);
 };
 
-// ✅ LEADERBOARD
+//  LEADERBOARD
 export const getLeaderboard = async (req, res) => {
   const rows = await TesterScore.find().sort({ impact: -1 });
   res.json(rows);
