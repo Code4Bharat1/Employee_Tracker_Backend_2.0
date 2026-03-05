@@ -36,18 +36,6 @@ const moduleSchema = new mongoose.Schema(
             enum: Object.values(MODULE_STATUS),
             default: MODULE_STATUS.PENDING,
         },
-        reviewStatus: {
-            type: String,
-            enum: Object.values(REVIEW_STATUS),
-            default: REVIEW_STATUS.PENDING,
-        },
-        reviewedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-        reviewedAt: Date,
-
-        isActive: {
-            type: Boolean,
-            default: true,
-        },
     },
     { timestamps: true }
 );
