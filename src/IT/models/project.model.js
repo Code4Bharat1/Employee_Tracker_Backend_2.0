@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { PROJECT_STATUS } from "../utils/constants.js";
+import { PRIORITY } from "../utils/constants.js";
 
 const projectSchema = new mongoose.Schema(
   {
@@ -15,6 +16,14 @@ const projectSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "IT_User",
       required: true
+    },
+    deadline: {
+      type: Date
+    },
+    priority: {
+      type: String,
+      enum: Object.values(PRIORITY),
+      default: PRIORITY.LOW
     }
   },
   { timestamps: true }

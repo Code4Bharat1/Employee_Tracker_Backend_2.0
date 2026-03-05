@@ -39,3 +39,9 @@ export const WORKLOG_STATUS = {
   APPROVED: "APPROVED",
   REJECTED: "REJECTED",
 };
+
+export const PRIORITY = {
+  HIGH: "HIGH",
+  MEDIUM: "MEDIUM",
+  LOW: "LOW"
+}
