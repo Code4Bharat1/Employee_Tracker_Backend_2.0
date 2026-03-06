@@ -17,6 +17,9 @@ const projectSchema = new mongoose.Schema(
       ref: "IT_User",
       required: true
     },
+    startDate: {
+      type: Date
+    },
     deadline: {
       type: Date
     },
