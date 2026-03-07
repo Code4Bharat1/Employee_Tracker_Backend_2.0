@@ -2,8 +2,16 @@ import Project from "../models/project.model.js";
 
 export const createProject = async (req, res)=>{
     try {
+
         const project = await Project.create(req.body);
-        res.status(201).json(project);
+
+        const populatedProject = await project.populate(
+            "assignedTo",
+            "name email"
+        );
+
+        res.status(201).json(populatedProject);
+
     } catch {
        res.status(500).json({message:"Project creation failed"}); 
     }
