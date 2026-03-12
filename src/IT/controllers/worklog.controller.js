@@ -44,6 +44,7 @@ export const updateMyWorklog = async (req, res) => {
     }
 
     log.description = req.body.description || log.description;
+log.status = req.body.status || log.status;
     log.task = req.body.task || log.task;
 
     if (req.file) {

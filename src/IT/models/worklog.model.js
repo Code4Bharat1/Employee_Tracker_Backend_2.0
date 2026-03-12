@@ -11,13 +11,13 @@ const worklogSchema = new mongoose.Schema(
     project: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "IT_Project",
-      required: true
+      required: true,
     },
 
     module: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "IT_Module",
-      required: true
+      required: true,
     },
 
     // task: {
@@ -34,10 +34,16 @@ const worklogSchema = new mongoose.Schema(
 
     screenShot: {
       type: String,
-      default: null
+      default: null,
+    },
+
+    status: {
+      type: String,
+      enum: ["Pending", "Approved", "Rejected"],
+      default: "Pending",
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export default mongoose.model("IT_Worklog", worklogSchema);

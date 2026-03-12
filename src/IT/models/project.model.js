@@ -10,7 +10,7 @@ const projectSchema = new mongoose.Schema(
     status: {
       type: String,
       enum: Object.values(PROJECT_STATUS),
-      default: PROJECT_STATUS.TESTING_COMPLETED,
+      default: PROJECT_STATUS.IN_PROGRESS,
     },
     assignedTo: {
       type: mongoose.Schema.Types.ObjectId,
