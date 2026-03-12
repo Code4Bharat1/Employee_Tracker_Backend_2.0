@@ -16,19 +16,19 @@ import { onlyTestingManager } from "../middlewares/role.middleware.js";
 const router = express.Router();
 
 // dashboard
-router.get("/dashboard", protect, onlyTestingManager, getTestingDashboard);
+router.get("/dashboard", protect, getTestingDashboard);
 
 // projects
-router.get("/projects", protect, onlyTestingManager, getTestingProjects);
-router.put("/projects/:id/validate", protect, onlyTestingManager, validatePhase);
-router.put("/projects/:id/complete", protect, onlyTestingManager, markPhaseCompleted);
+router.get("/projects", protect, getTestingProjects);
+router.put("/projects/:id/validate", protect, validatePhase);
+router.put("/projects/:id/complete", protect, markPhaseCompleted);
 
 // bugs
-router.get("/bugs", protect, onlyTestingManager, getBugs);
-router.post("/bugs", protect, onlyTestingManager, createBug);
-router.put("/bugs/:bugId/status", protect, onlyTestingManager, updateBugStatus);
+router.get("/bugs", protect, getBugs);
+router.post("/bugs", protect, createBug);
+router.put("/bugs/:bugId/status", protect, updateBugStatus);
 
 // leaderboard
-router.get("/leaderboard", protect, onlyTestingManager, getLeaderboard);
+router.get("/leaderboard", protect, getLeaderboard);
 
 export default router;
