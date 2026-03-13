@@ -7,7 +7,7 @@ import {
     updateProjectStatus,
     getProjectById,
 }from "../controllers/project.controller.js";
-import{protect}from "../middlewares/auth.middleware.js";
+import {protect} from "../middlewares/auth.middleware.js";
 
 
 const router = express.Router();

@@ -1,16 +1,25 @@
 import Module from "../models/module.model.js";
-import { calculateScore10 } from "../utils/score.util.js";
 import Rating from "../models/rating.model.js";
+import { MODULE_STATUS } from "../utils/constants.js";
 
-/* ================= CREATE MODULE ================= */
+/* CREATE MODULE */
 
 export const createModule = async (req, res) => {
   try {
+
     const module = await Module.create(req.body);
+
     res.status(201).json(module);
+
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Creation Failed" });
+
+    console.log("MODULE CREATE ERROR:", error);
+
+    res.status(500).json({
+      message: "Creation Failed",
+      error: error.message
+    });
+
   }
 };
 
@@ -30,15 +39,16 @@ export const getModules = async (req, res) => {
 
 export const updateModule = async (req, res) => {
   try {
-    const module = await Module.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true }
-    );
+    if (req.body.status === MODULE_STATUS.COMPLETED) {
+      req.body.completedAt = new Date();
+    }
+
+    const module = await Module.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
 
     res.status(200).json(module);
   } catch (error) {
-    console.log(error);
     res.status(500).json({ message: "Update failed" });
   }
 };
@@ -60,59 +70,61 @@ export const deleteModule = async (req, res) => {
 
 export const reviewModule = async (req, res) => {
   try {
-    const { decision, deduction10, reason } = req.body;
-
-    if (!decision) {
-      return res.status(400).json({ message: "decision is required" });
-    }
+    const { decision, reason } = req.body;
 
     const module = await Module.findById(req.params.id).populate(
-      "assignedTo project"
+      "assignedTo project",
     );
 
     if (!module) {
       return res.status(404).json({ message: "Module not found" });
     }
 
-    if (module.status !== "COMPLETED") {
-      return res
-        .status(400)
-        .json({ message: "Module must be COMPLETED before review" });
+    if (module.status !== MODULE_STATUS.COMPLETED) {
+      return res.status(400).json({
+        message: "Module must be COMPLETED before review",
+      });
     }
 
+    /* approve or reject */
+
     if (decision === "APPROVED") {
-      module.status = "APPROVED";
+      module.status = MODULE_STATUS.APPROVED;
     } else {
-      module.status = "IN_PROGRESS";
-      module.reworkCount = (module.reworkCount || 0) + 1;
+      module.status = MODULE_STATUS.IN_PROGRESS;
+      module.reworkCount += 1;
     }
 
     await module.save();
 
-    /* ===== SCORE LOGIC ===== */
+    /* ===== SCORE CALCULATION ===== */
 
-    let points10 = 0;
+    const modules = await Module.find({
+      assignedTo: module.assignedTo,
+      project: module.project,
+    });
 
-    if (decision === "APPROVED") {
-      points10 = calculateScore10({
-        deadline: module.deadline,
-        completedAt: module.updatedAt,
-        reworkCount: module.reworkCount || 0,
-        bugCount: module.bugCount || 0,
-        base: 9,
-      });
-    } else {
-      points10 = -1 * (typeof deduction10 === "number" ? deduction10 : 3);
+    const basePoints = 10 / modules.length;
+
+    let points10 = basePoints;
+
+    if (module.completedAt > module.deadline) {
+      points10 = basePoints * 0.5;
+    }
+
+    if (decision === "REJECTED") {
+      points10 = -basePoints;
     }
 
     /* ===== SAVE RATING ===== */
 
     const rating = await Rating.findOneAndUpdate(
-      { module: module._id, type: "MODULE" },
+      { module: module._id },
+
       {
-        employee: module.assignedTo?._id,
+        employee: module.assignedTo,
         module: module._id,
-        project: module.project || undefined,
+        project: module.project,
         type: "MODULE",
         decision,
         points10,
@@ -120,7 +132,8 @@ export const reviewModule = async (req, res) => {
         createdBy: req.user?.id,
         reviewedAt: new Date(),
       },
-      { new: true, upsert: true }
+
+      { new: true, upsert: true },
     );
 
     res.status(200).json({
