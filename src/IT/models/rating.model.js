@@ -11,11 +11,13 @@ const ratingSchema = new mongoose.Schema(
     module: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "IT_Module",
+      required: true, // ✅ ADD
     },
 
     project: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "IT_Project",
+      required: true, // ✅ ADD
     },
 
     type: {
@@ -24,22 +26,23 @@ const ratingSchema = new mongoose.Schema(
       required: true,
     },
 
-    decision: {
+    reviewStatus: { // ✅ RENAMED
       type: String,
       enum: ["APPROVED", "REJECTED"],
+      required: true, // ✅ ADD
     },
 
     points10: {
       type: Number,
-      min: -10,
+      min: 0,   // ✅ CHANGE (no negative)
       max: 10,
+      required: true,
     },
-
-    reason: String,
 
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "IT_User",
+      required: true, // ✅ ADD
     },
 
     skill: {
@@ -48,12 +51,21 @@ const ratingSchema = new mongoose.Schema(
       required: true,
     },
 
-    reviewedAt: Date,
+    attempt: { // ✅ NEW (VERY USEFUL)
+      type: Number,
+      default: 1,
+    },
+
+    reviewedAt: {
+      type: Date,
+      default: Date.now, // ✅ AUTO SET
+    },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 ratingSchema.index({ employee: 1 });
 ratingSchema.index({ project: 1 });
+ratingSchema.index({ module: 1 }); // ✅ ADD
 
 export default mongoose.model("Rating", ratingSchema);

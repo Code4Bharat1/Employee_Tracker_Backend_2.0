@@ -2,13 +2,14 @@ import Rating from "../models/rating.model.js";
 
 export const getRatings = async (req, res) => {
   try {
-
-    const { employee, decision, from, to } = req.query;
+    const { employee, status, from, to } = req.query;
 
     const filter = {};
 
     if (employee) filter.employee = employee;
-    if (decision) filter.decision = decision;
+
+    // ✅ status from query maps to reviewStatus
+    if (status) filter.reviewStatus = status;
 
     if (from || to) {
       filter.reviewedAt = {};
@@ -22,7 +23,7 @@ export const getRatings = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      ratings
+      ratings,
     });
 
   } catch (error) {
@@ -31,16 +32,13 @@ export const getRatings = async (req, res) => {
   }
 };
 
-
 export const getEmployeeRatingSummary = async (req, res) => {
-
   try {
-
     const employeeId = req.params.employeeId;
 
     const ratings = await Rating.find({
-      employee: employeeId
-    }).select("points10 decision");
+      employee: employeeId,
+    }).select("points10 reviewStatus"); // ✅ updated
 
     const totalCount = ratings.length;
 
@@ -53,12 +51,13 @@ export const getEmployeeRatingSummary = async (req, res) => {
       ? Number((totalPoints / totalCount).toFixed(2))
       : 0;
 
+    // ✅ updated
     const approvedCount = ratings.filter(
-      r => r.decision === "APPROVED"
+      (r) => r.reviewStatus === "APPROVED"
     ).length;
 
     const rejectedCount = ratings.filter(
-      r => r.decision === "REJECTED"
+      (r) => r.reviewStatus === "REJECTED"
     ).length;
 
     res.status(200).json({
@@ -68,18 +67,15 @@ export const getEmployeeRatingSummary = async (req, res) => {
         approvedModules: approvedCount,
         rejectedModules: rejectedCount,
         totalPoints,
-        averageScore
-      }
+        averageScore,
+      },
     });
 
   } catch (error) {
-
     console.log(error);
 
     res.status(500).json({
-      message: "Summary failed"
+      message: "Summary failed",
     });
-
   }
-
 };

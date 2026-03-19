@@ -21,7 +21,7 @@ export const login = async (req, res) => {
       role: user.role,
     });
 
-    const refreshToken = generateRefreshToken({ id: user._id });
+    const refreshToken = generateRefreshToken({ id: user._id, role: user.role });
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,

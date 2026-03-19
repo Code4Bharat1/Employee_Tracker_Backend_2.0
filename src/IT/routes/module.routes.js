@@ -19,7 +19,6 @@ router.delete("/delete/:id", protect, deleteModule);
 router.patch(
   "/review/:id",
   protect,
-  allowRoles("PROJECT_MANAGER", "IT_ADMIN"),
   reviewModule
 );
 

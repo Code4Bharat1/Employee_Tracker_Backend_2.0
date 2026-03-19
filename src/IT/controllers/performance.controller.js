@@ -124,7 +124,11 @@ export const getProjectLeaderboard = async (req, res) => {
 
 export const getTopPerformers = async (req, res) => {
   const data = await Rating.aggregate([
-    { $match: { decision: "APPROVED" } },
+    {
+      $match: {
+        employee: { $ne: null }
+      }
+    },
 
     {
       $group: {
@@ -148,6 +152,7 @@ export const getTopPerformers = async (req, res) => {
     {
       $project: {
         name: "$employee.name",
+        role: "$employee.role",
         score: { $round: ["$avgScore", 2] },
         modules: 1,
       },
@@ -159,7 +164,6 @@ export const getTopPerformers = async (req, res) => {
 
   res.json(data);
 };
-
 
 export const getTeamSkillRadar = async (req, res) => {
   try {
@@ -248,4 +252,73 @@ export const getTeamSkillRadar = async (req, res) => {
     console.error("❌ Team Radar Error:", error);
     res.status(500).json({ message: error.message });
   }
+};
+
+export const getProductivityHeatmap = async (req, res) => {
+  try {
+    const data = await Module.aggregate([
+      {
+        $match: {
+          completedAt: { $ne: null },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            $dateToString: {
+              format: "%Y-%m-%d",
+              date: "$completedAt",
+            },
+          },
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    res.json(data);
+
+  } catch (error) {
+    res.status(500).json({ message: "Heatmap failed" });
+  }
+};
+
+const getPerformerPipeline = () => [
+  {
+    $match: {
+      employee: { $ne: null }
+    }
+  },
+  {
+    $group: {
+      _id: "$employee",
+      avgScore: { $avg: "$points10" },
+      modules: { $sum: 1 },
+    },
+  },
+  {
+    $lookup: {
+      from: "it_users",
+      localField: "_id",
+      foreignField: "_id",
+      as: "employee",
+    },
+  },
+  { $unwind: "$employee" },
+  {
+    $project: {
+      name: "$employee.name",
+      role: "$employee.role",
+      score: { $round: ["$avgScore", 2] },
+      modules: 1,
+    },
+  },
+  { $sort: { score: -1 } },
+];
+
+export const getAllPerformers = async (req, res) => {
+  const data = await Rating.aggregate(
+    getPerformerPipeline() // ✅ no limit
+  );
+
+  res.json(data);
 };

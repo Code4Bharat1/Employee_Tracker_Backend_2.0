@@ -44,16 +44,48 @@ export const getModules = async (req, res) => {
 
 export const updateModule = async (req, res) => {
   try {
-    if (req.body.status === MODULE_STATUS.COMPLETED) {
-      req.body.completedAt = new Date();
+    const module = await Module.findById(req.params.id);
+
+    if (!module) {
+      return res.status(404).json({ message: "Module not found" });
     }
 
-    const module = await Module.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
+    /* ================= STATUS VALIDATION ================= */
+
+    if (req.body.status) {
+      const allowedStatuses = [
+        MODULE_STATUS.IN_PROGRESS,
+        MODULE_STATUS.COMPLETED
+      ];
+
+      if (!allowedStatuses.includes(req.body.status)) {
+        return res.status(400).json({
+          message: "You are not allowed to set this status"
+        });
+      }
+    }
+
+    /* ================= UPDATE DATA ================= */
+
+    Object.assign(module, req.body);
+
+    /* ================= COMPLETED LOGIC ================= */
+
+    if (
+      module.status === MODULE_STATUS.COMPLETED &&
+      !module.completedAt
+    ) {
+      module.completedAt = new Date();
+    }
+
+    /* ================= SAVE (TRIGGERS PRE SAVE) ================= */
+
+    await module.save();
 
     res.status(200).json(module);
+
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: "Update failed" });
   }
 };
@@ -75,7 +107,7 @@ export const deleteModule = async (req, res) => {
 
 export const reviewModule = async (req, res) => {
   try {
-    const { decision, reason } = req.body;
+    const { status } = req.body;
 
     const module = await Module.findById(req.params.id).populate(
       "assignedTo project"
@@ -93,7 +125,7 @@ export const reviewModule = async (req, res) => {
 
     /* ================= VALIDATE DECISION ================= */
 
-    if (!["APPROVED", "REJECTED"].includes(decision)) {
+    if (!["APPROVED", "REJECTED"].includes(status)) {
       return res.status(400).json({ message: "Invalid decision" });
     }
 
@@ -104,7 +136,7 @@ export const reviewModule = async (req, res) => {
 
     /* ================= UPDATE MODULE ================= */
 
-    if (decision === "APPROVED") {
+    if (status === "APPROVED") {
       module.status = MODULE_STATUS.APPROVED;
     } else {
       module.status = MODULE_STATUS.IN_PROGRESS;
@@ -122,10 +154,9 @@ export const reviewModule = async (req, res) => {
         module: module._id,
         project: module.project,
         type: "MODULE",
-        decision,      // ✅ manual
+        status,      // ✅ manual
         points10: score, // 🤖 auto
         skill,          // 🤖 auto
-        reason,
         createdBy: req.user?._id,
         reviewedAt: new Date(),
       },
@@ -133,7 +164,7 @@ export const reviewModule = async (req, res) => {
     );
 
     res.status(200).json({
-      message: `Module ${decision} + auto score generated`,
+      message: `Module ${status} + auto score generated`,
       module,
       rating,
     });
