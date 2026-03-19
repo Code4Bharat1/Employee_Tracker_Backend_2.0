@@ -25,6 +25,7 @@ import itprojectRoutes from "./src/IT/routes/project.routes.js";
 import itAuthRoutes from "./src/IT/routes/auth.routes.js";
 import itRatingRoutes from "./src/IT/routes/rating.routes.js";
 import itReportRoutes from "./src/IT/routes/report.routes.js";
+import itPerformanceRoutes from "./src/IT/routes/performance.routes.js"
 
 
 // import testingRoutes from "./src/IT/routes/testing.routes.js";
@@ -70,6 +71,7 @@ app.use("/api/it/project", itprojectRoutes);
 app.use("/api/it/auth", itAuthRoutes);
 app.use("/api/it/rating", itRatingRoutes);
 app.use("/api/it/report", itReportRoutes);
+app.use("/api/it/performance", itPerformanceRoutes);
 // 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {

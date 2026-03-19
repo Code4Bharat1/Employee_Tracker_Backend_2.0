@@ -2,6 +2,11 @@ import Module from "../models/module.model.js";
 import Rating from "../models/rating.model.js";
 import { MODULE_STATUS } from "../utils/constants.js";
 
+import {
+  calculateModuleScore,
+  determineSkill
+} from "../utils/performance.util.js";
+
 /* CREATE MODULE */
 
 export const createModule = async (req, res) => {
@@ -73,7 +78,7 @@ export const reviewModule = async (req, res) => {
     const { decision, reason } = req.body;
 
     const module = await Module.findById(req.params.id).populate(
-      "assignedTo project",
+      "assignedTo project"
     );
 
     if (!module) {
@@ -86,7 +91,18 @@ export const reviewModule = async (req, res) => {
       });
     }
 
-    /* approve or reject */
+    /* ================= VALIDATE DECISION ================= */
+
+    if (!["APPROVED", "REJECTED"].includes(decision)) {
+      return res.status(400).json({ message: "Invalid decision" });
+    }
+
+    /* ================= AUTO SCORE ================= */
+
+    const score = calculateModuleScore(module);
+    const skill = determineSkill(module);
+
+    /* ================= UPDATE MODULE ================= */
 
     if (decision === "APPROVED") {
       module.status = MODULE_STATUS.APPROVED;
@@ -97,50 +113,31 @@ export const reviewModule = async (req, res) => {
 
     await module.save();
 
-    /* ===== SCORE CALCULATION ===== */
-
-    const modules = await Module.find({
-      assignedTo: module.assignedTo,
-      project: module.project,
-    });
-
-    const basePoints = 10 / modules.length;
-
-    let points10 = basePoints;
-
-    if (module.completedAt > module.deadline) {
-      points10 = basePoints * 0.5;
-    }
-
-    if (decision === "REJECTED") {
-      points10 = -basePoints;
-    }
-
-    /* ===== SAVE RATING ===== */
+    /* ================= SAVE RATING ================= */
 
     const rating = await Rating.findOneAndUpdate(
       { module: module._id },
-
       {
         employee: module.assignedTo,
         module: module._id,
         project: module.project,
         type: "MODULE",
-        decision,
-        points10,
+        decision,      // ✅ manual
+        points10: score, // 🤖 auto
+        skill,          // 🤖 auto
         reason,
-        createdBy: req.user?.id,
+        createdBy: req.user?._id,
         reviewedAt: new Date(),
       },
-
-      { new: true, upsert: true },
+      { new: true, upsert: true }
     );
 
     res.status(200).json({
-      message: `Module ${decision} + rating generated`,
+      message: `Module ${decision} + auto score generated`,
       module,
       rating,
     });
+
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Module review failed" });

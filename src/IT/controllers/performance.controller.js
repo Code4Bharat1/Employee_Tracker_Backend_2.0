@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Module from "../models/module.model.js";
 import Rating from "../models/rating.model.js";
 import User from "../models/user.model.js";
@@ -63,7 +64,15 @@ export const getModuleTrend = async (req, res) => {
       },
     },
 
-    { $sort: { _id: 1 } },
+    {
+      $project: {
+        _id: 0,
+        date: "$_id",   // ✅ FIX HERE
+        modules: 1,
+      },
+    },
+
+    { $sort: { date: 1 } }, // also sort by date now
   ]);
 
   res.json(trend);
@@ -149,4 +158,94 @@ export const getTopPerformers = async (req, res) => {
   ]);
 
   res.json(data);
+};
+
+
+export const getTeamSkillRadar = async (req, res) => {
+  try {
+    const data = await Rating.aggregate([
+      { $match: { decision: "APPROVED" } },
+
+      {
+        $lookup: {
+          from: "it_modules",
+          localField: "module",
+          foreignField: "_id",
+          as: "moduleData",
+        },
+      },
+
+      {
+        $unwind: {
+          path: "$moduleData",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+
+      {
+        $addFields: {
+          adjustedScore: {
+            $subtract: [
+              {
+                $add: [
+                  "$points10",
+                  {
+                    $cond: [
+                      {
+                        $and: [
+                          { $ifNull: ["$moduleData.completedAt", false] },
+                          {
+                            $lt: [
+                              "$moduleData.completedAt",
+                              "$moduleData.deadline",
+                            ],
+                          },
+                        ],
+                      },
+                      1,
+                      0,
+                    ],
+                  },
+                ],
+              },
+              {
+                $add: [
+                  { $multiply: ["$moduleData.bugCount", 0.2] },
+                  { $multiply: ["$moduleData.reworkCount", 0.3] },
+                ],
+              },
+            ],
+          },
+        },
+      },
+
+      {
+        $group: {
+          _id: "$skill",
+          avgScore: { $avg: "$adjustedScore" },
+        },
+      },
+
+      {
+        $project: {
+          _id: 0,
+          skill: "$_id",
+          score: { $round: ["$avgScore", 1] },
+        },
+      },
+    ]);
+
+    const allSkills = ["Delivery", "Quality", "Ownership", "Collaboration", "Learning"];
+
+    const formatted = allSkills.map((skill) => {
+      const found = data.find((d) => d.skill === skill);
+      return found || { skill, score: 0 };
+    });
+
+    res.json(formatted);
+
+  } catch (error) {
+    console.error("❌ Team Radar Error:", error);
+    res.status(500).json({ message: error.message });
+  }
 };

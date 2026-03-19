@@ -53,15 +53,25 @@ export const deleteProject = async(req,res)=>{
     }
 };
 
-export const updateProjectStatus = async (req, res)=>{
-    try {
-        const project = await Project.findByIdAndUpdate(
-            req.params.id,
-            {status:req.body.status},
-            {new: true}
-        );
-        res.status(200).json(project);
-    } catch {
-        res.status(500).json({message:"status  update failed"});
+export const updateProjectStatus = async (req, res) => {
+  try {
+    const project = await Project.findByIdAndUpdate(
+      req.params.id,
+      { status: req.body.status },
+      { new: true }
+    );
+
+    // ✅ HANDLE NOT FOUND
+    if (!project) {
+      return res.status(404).json({
+        message: "Project not found",
+      });
     }
+
+    res.status(200).json(project);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Status update failed" });
+  }
 };
